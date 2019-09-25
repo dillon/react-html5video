@@ -122,6 +122,8 @@ DefaultPlayer.propTypes = {
     video: PropTypes.object.isRequired
 };
 
+const isServerSide = () => !(typeof window !== 'undefined' && window !== null);
+
 const connectedPlayer = videoConnect(
     DefaultPlayer,
     ({ networkState, readyState, error, ...restState }) => ({
@@ -132,7 +134,7 @@ const connectedPlayer = videoConnect(
             // TODO: This is not pretty. Doing device detection to remove
             // spinner on iOS devices for a quick and dirty win. We should see if
             // we can use the same readyState check safely across all browsers.
-            loading: readyState < (/iPad|iPhone|iPod/.test(navigator.userAgent) ? 1 : 4),
+            loading: readyState (!isServerSide() && < (/iPad|iPhone|iPod/.test(navigator.userAgent) ? 1 : 4)),
             percentagePlayed: getPercentagePlayed(restState),
             percentageBuffered: getPercentageBuffered(restState),
             ...restState
